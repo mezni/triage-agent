@@ -28,35 +28,56 @@ Later it will also research similar historical tickets and use persistent custom
 The final conceptual flow:
 
 ```
-                         Support Ticket
-                               │
-                               ▼
-                       Memory Retrieval
-                               │
-                               ▼
-                        Triage Agent
-                               │
-              ┌────────────────┼────────────────┐
-              ▼                ▼                ▼
-        Knowledge Base     Research Agent    Action Tools
-             Search                             │
-                                                ├── Create Ticket
-                                                │
-                                                └── Escalate
-              └────────────────┬────────────────┘
-                               ▼
-                         Final Response
-                               │
-                               ▼
-                       Memory Management
-                               │
-                 ┌─────────────┴─────────────┐
-                 ▼                           ▼
-            Evaluation                 Observability
-                 │                           │
-                 └─────────────┬─────────────┘
-                               ▼
-                              CI/CD
+                            ┌───────────────────────┐
+                            │     Support Ticket    │
+                            └───────────┬───────────┘
+                                        ▼
+                            ┌───────────────────────┐
+                            │    Memory Retrieval   │
+                            └───────────┬───────────┘
+                                        ▼
+                            ┌───────────────────────┐
+                            │      Triage Agent     │
+                            └───────────┬───────────┘
+                                        │
+                    ┐───────────────────┼───────────────────┌
+                    ▼                   ▼                   ▼
+           ┌─────────────────┐
+           │  Knowledge Base │
+           └────────┬────────┘
+                               ┌─────────────────┐
+                               │  Research Agent │
+                               └────────┬────────┘
+                                                   ┌─────────────────┐
+                                                   │   Action Tools  │
+                                                   └────────┬────────┘
+                                                            ├── Create Ticket
+                                                            ├── Escalate
+                    │                   │                   │
+                    └───────────────────┬───────────────────┘
+                                        ▼
+                            ┌───────────────────────┐
+                            │     Final Response    │
+                            └───────────┬───────────┘
+                                        ▼
+                            ┌───────────────────────┐
+                            │   Memory Management   │
+                            └───────────┬───────────┘
+                                        │
+                    ┐───────────────────┴───────────────────┌
+                    ▼                                       ▼
+           ┌─────────────────┐
+           │    Evaluation   │
+           └────────┬────────┘
+                                                   ┌─────────────────┐
+                                                   │  Observability  │
+                                                   └────────┬────────┘
+                    │                   │                   │
+                    └───────────────────┬───────────────────┘
+                                        ▼
+                            ┌───────────────────────┐
+                            │         CI/CD         │
+                            └───────────────────────┘
 ```
 
 ## 3. What You Will Learn
@@ -154,13 +175,22 @@ We do **not** create all of this at once — each phase introduces only the piec
 **Architecture:**
 
 ```
-Ticket
-  ↓
-Prompt
-  ↓
-LLM
-  ↓
-Structured Result
+        ┌────────────────┐
+        │     Ticket     │
+        └────────┬───────┘
+                 ▼
+        ┌────────────────┐
+        │     Prompt     │
+        └────────┬───────┘
+                 ▼
+        ┌────────────────┐
+        │      LLM       │
+        └────────┬───────┘
+                 ▼
+        ┌────────────────┐
+        │   Structured   │
+        │     Result     │
+        └────────────────┘
 ```
 
 **Deliverable:** Simple ticket classifier/responder.
@@ -174,13 +204,23 @@ Structured Result
 **Architecture:**
 
 ```
-LLM
- ↓
-Decision
- ↓
-Tool?
- ├── Yes → Tool → Result → LLM
- └── No  → Final Response
+                  ┌──────────────────────┐
+                  │         LLM          │◄─────────┐
+                  └───────────┬──────────┘       │
+                              ▼                     │
+                  ┌──────────────────────┐       │
+                  │       Decision       │       │
+                  └───────────┬──────────┘       │
+                              │                     │
+                ┐─────────────┴───────────┌       │
+        tool_use                stop_reason         │
+                │                           │       │
+                ▼                         ▼         │
+       ┌────────────────┐        ┌────────────────┐ │
+       │  Execute Tool  │        │ Final Response │ │
+       └────────┬───────┘        └────────────────┘ │
+                └────────── tool result ─────────────┘
+        (append tool result to message history, then loop again)
 ```
 
 **Deliverable:** Minimal manually implemented agent.
@@ -212,15 +252,25 @@ Tool?
 We intentionally create:
 
 ```
-BAD TOOL SCHEMA
-      ↓
-Observe failures
-      ↓
-Diagnose
-      ↓
-Fix schema
-      ↓
-Compare behavior
+        ┌──────────────────────┐
+        │   Bad Tool Schema    │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │   Observe failures   │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │       Diagnose       │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │      Fix schema      │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │   Compare behavior   │
+        └──────────────────────┘
 ```
 
 **Learn:** schema ambiguity, descriptions, required fields, enums, argument validation, tool misuse, interface design
@@ -275,23 +325,37 @@ We'll expose functionality such as knowledge-base search through MCP.
 **Architecture:**
 
 ```
-             Ticket
-                ↓
-         ┌─────────────┐
-         │Triage Agent │
-         └──────┬──────┘
-                ↓
-         Need research?
-                ↓
-        ┌──────────────┐
-        │Research Agent│
-        └──────┬───────┘
-               ↓
-          Research
-               ↓
-         Triage Agent
-               ↓
-        Final Response
+           ┌────────────────┐
+           │     Ticket     │
+           └────────┬───────┘
+                    ▼
+           ┌────────────────┐
+           │  Triage Agent  │
+           └────────┬───────┘
+                    ▼
+           ┌────────────────┐
+           │ Need research? │
+           └────────┬───────┘
+      no                      yes
+        ┐───────────┴───────────┌
+        │                       │
+        ▼                       ▼
+        │              ┌────────────────┐
+        │              │ Research Agent │
+        │              └────────┬───────┘
+        │                       │
+        │                      Research
+        │                       │
+        └───────────┬───────────┘
+                    ▼
+           ┌────────────────┐
+           │  Triage Agent  │
+           └────────┬───────┘
+                    ▼
+           ┌────────────────┐
+           │     Final      │
+           │    Response    │
+           └────────────────┘
 ```
 
 **Learn:** specialization, handoffs, context passing, shared state, agent boundaries, loops, redundant calls, context loss
@@ -323,17 +387,29 @@ Create a fixed evaluation dataset and evaluate: classification, priority, tool s
 **Architecture:**
 
 ```
-Git Push
-   ↓
-GitHub Actions
-   ↓
-Unit Tests
-   ↓
-Agent Evaluation
-   ↓
-Regression Detection
-   ↓
-Pass / Fail
+        ┌────────────────────────┐
+        │        Git Push        │
+        └────────────┬───────────┘
+                     ▼
+        ┌────────────────────────┐
+        │     GitHub Actions     │
+        └────────────┬───────────┘
+                     ▼
+        ┌────────────────────────┐
+        │       Unit Tests       │
+        └────────────┬───────────┘
+                     ▼
+        ┌────────────────────────┐
+        │    Agent Evaluation    │
+        └────────────┬───────────┘
+                     ▼
+        ┌────────────────────────┐
+        │  Regression Detection  │
+        └────────────┬───────────┘
+                     ▼
+        ┌────────────────────────┐
+        │      Pass / Fail       │
+        └────────────────────────┘
 ```
 
 **Learn:** GitHub Actions, automated testing, evaluation in CI, regression protection
@@ -359,13 +435,19 @@ Handle: LLM failure, API timeout, rate limit, tool failure, validation failure, 
 **Example:**
 
 ```
-Agent wants to perform action
-            ↓
-       Guardrail
-            ↓
-     ┌──────┴──────┐
-     ↓             ↓
-   Allowed       Blocked
+        ┌──────────────────────────────────┐
+        │ Agent wants to perform an action │
+        └─────────────────┬────────────────┘
+                          ▼
+        ┌──────────────────────────────────┐
+        │         Guardrail Check          │
+        └─────────────────┬────────────────┘
+                          │
+              ┐───────────┴───────────┌
+              ▼                       ▼
+      ┌──────────────┐          ┌──────────────┐
+      │   Allowed    │          │   Blocked    │
+      └──────────────┘          └──────────────┘
 ```
 
 **Deliverable:** Explicit safety and authority layer.
@@ -387,19 +469,33 @@ We deliberately introduce failures: bad prompt, bad schema, bad tool result, mis
 For every problem:
 
 ```
-Observe
-   ↓
-Reproduce
-   ↓
-Collect evidence
-   ↓
-Identify root cause
-   ↓
-Fix
-   ↓
-Add regression test
-   ↓
-Verify
+        ┌──────────────────────┐
+        │       Observe        │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │      Reproduce       │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │   Collect evidence   │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │ Identify root cause  │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │         Fix          │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │ Add regression test  │
+        └───────────┬──────────┘
+                    ▼
+        ┌──────────────────────┐
+        │        Verify        │
+        └──────────────────────┘
 ```
 
 **Deliverable:** A collection of experiment reports showing how real agent failures were diagnosed.
@@ -411,55 +507,73 @@ The project ultimately follows this progression:
 ```
                 AI ENGINEERING JOURNEY
 
-LLM
- │
- ▼
-Structured LLM Application
- │
- ▼
-Agent Loop
- │
- ▼
-Tool Use
- │
- ▼
-Grounding / Knowledge
- │
- ▼
-Tool Schema Engineering
- │
- ▼
-Structured Extraction
- │
- ▼
-Memory Management
- │
- ▼
-MCP
- │
- ▼
-Multi-Agent Orchestration
- │
- ▼
-AI-Assisted Development
- │
- ▼
-Evaluation
- │
- ▼
-CI/CD
- │
- ▼
-Reliability
- │
- ▼
-Guardrails
- │
- ▼
-Observability
- │
- ▼
-Production Diagnosis
+      ┌────────────────────────────┐
+      │            LLM             │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │ Structured LLM Application │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │         Agent Loop         │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │          Tool Use          │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │   Grounding / Knowledge    │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │  Tool Schema Engineering   │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │   Structured Extraction    │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │     Memory Management      │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │            MCP             │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │ Multi-Agent Orchestration  │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │  AI-Assisted Development   │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │         Evaluation         │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │           CI/CD            │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │        Reliability         │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │         Guardrails         │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │       Observability        │
+      └──────────────┬─────────────┘
+                     ▼
+      ┌────────────────────────────┐
+      │    Production Diagnosis    │
+      └────────────────────────────┘
 ```
 
 ## Getting Started
