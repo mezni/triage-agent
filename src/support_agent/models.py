@@ -37,3 +37,18 @@ class KnowledgeArticle(BaseModel):
     title: str
     category: str
     content: str
+
+
+class SupportTicketRecord(BaseModel):
+    ticket_id: str
+    customer_id: str
+    category: TicketCategory
+    priority: TicketPriority
+    summary: str
+    status: str = "open"
+
+
+class EscalationRecord(BaseModel):
+    ticket_id: str
+    reason: str
+    status: str = "pending"

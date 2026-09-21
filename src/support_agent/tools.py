@@ -1,5 +1,17 @@
+import uuid
+
+from support_agent.action_store import (
+    ESCALATIONS,
+    TICKETS,
+)
 from support_agent.knowledge_base import (
     search_knowledge_base,
+)
+from support_agent.models import (
+    EscalationRecord,
+    SupportTicketRecord,
+    TicketCategory,
+    TicketPriority,
 )
 
 
@@ -65,9 +77,132 @@ SEARCH_KNOWLEDGE_BASE_TOOL = {
 }
 
 
+def create_ticket(
+    customer_id: str,
+    category: str,
+    priority: str,
+    summary: str,
+) -> str:
+
+    ticket = SupportTicketRecord(
+        ticket_id=f"T-{uuid.uuid4().hex[:8].upper()}",
+        customer_id=customer_id,
+        category=TicketCategory(category),
+        priority=TicketPriority(priority),
+        summary=summary,
+    )
+
+    TICKETS.append(ticket)
+
+    return (
+        f"Support ticket created successfully. "
+        f"Ticket ID: {ticket.ticket_id}"
+    )
+
+
+CREATE_TICKET_TOOL = {
+    "name": "create_ticket",
+    "description": (
+        "Create a support ticket for a customer when "
+        "their issue requires follow-up or cannot be "
+        "resolved immediately."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "customer_id": {
+                "type": "string",
+                "description": "The customer's unique identifier.",
+            },
+            "category": {
+                "type": "string",
+                "enum": [
+                    "account",
+                    "billing",
+                    "technical",
+                    "product",
+                    "shipping",
+                    "other",
+                ],
+                "description": "The support ticket category.",
+            },
+            "priority": {
+                "type": "string",
+                "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "urgent",
+                ],
+                "description": "The ticket priority.",
+            },
+            "summary": {
+                "type": "string",
+                "description": "A concise summary of the issue.",
+            },
+        },
+        "required": [
+            "customer_id",
+            "category",
+            "priority",
+            "summary",
+        ],
+    },
+}
+
+
+def escalate_to_human(
+    ticket_id: str,
+    reason: str,
+) -> str:
+
+    escalation = EscalationRecord(
+        ticket_id=ticket_id,
+        reason=reason,
+    )
+
+    ESCALATIONS.append(escalation)
+
+    return (
+        f"Ticket {ticket_id} has been escalated "
+        f"to a human support representative."
+    )
+
+
+ESCALATE_TO_HUMAN_TOOL = {
+    "name": "escalate_to_human",
+    "description": (
+        "Escalate a support ticket to a human support "
+        "representative when automated handling is "
+        "insufficient or human intervention is required."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "ticket_id": {
+                "type": "string",
+                "description": "The support ticket identifier.",
+            },
+            "reason": {
+                "type": "string",
+                "description": (
+                    "Why human intervention is required."
+                ),
+            },
+        },
+        "required": [
+            "ticket_id",
+            "reason",
+        ],
+    },
+}
+
+
 TOOL_SCHEMAS = [
     CUSTOMER_STATUS_TOOL,
     SEARCH_KNOWLEDGE_BASE_TOOL,
+    CREATE_TICKET_TOOL,
+    ESCALATE_TO_HUMAN_TOOL,
 ]
 
 
@@ -105,4 +240,6 @@ def search_knowledge_base_tool(
 TOOL_REGISTRY = {
     "get_customer_status": get_customer_status,
     "search_knowledge_base": search_knowledge_base_tool,
+    "create_ticket": create_ticket,
+    "escalate_to_human": escalate_to_human,
 }

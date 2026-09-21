@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | 0.1.0 (unreleased) | Phase 1 — First LLM Application | Build a simple LLM triage pipeline: domain models, config, prompts, Anthropic wrapper, orchestrator, CLI runner, and offline tests. |
 | 0.1.0 (unreleased) | Phase 2 — Agent Loop | Implement a manual agent loop over the LLM with an educational tool, tool schemas, a tool registry, and execute-then-feed-back tool results. |
 | 0.1.0 (unreleased) | Phase 3 — Knowledge-Base Tool | Ground agent answers by searching a fake knowledge base, with a search tool, result formatter, and grounded-generation prompt rules. |
+| 0.1.0 (unreleased) | Phase 4 — Action Tools | Let the agent perform controlled actions by adding `create_ticket` and `escalate_to_human`, an in-memory action store, strict argument validation, and action rules. |
 
 ## [Unreleased]
 
@@ -62,3 +63,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `TRIAGE_SYSTEM_PROMPT` with grounding rules (use the KB, don't invent policies, admit insufficient information).
 - Added `src/support_agent/run_knowledge_agent.py` runner and knowledge-base search tests in `tests/test_tools.py`.
 - Added knowledge-base experiment documentation `docs/experiments/03_knowledge_base.md`.
+
+### Phase 4 — Action Tools
+
+- Added `SupportTicketRecord` and `EscalationRecord` models in `src/support_agent/models.py`.
+- Added `src/support_agent/action_store.py` in-memory `TICKETS` and `ESCALATIONS` stores (no database yet).
+- Added `create_ticket` + `CREATE_TICKET_TOOL` and `escalate_to_human` + `ESCALATE_TO_HUMAN_TOOL` in `src/support_agent/tools.py`, with enum-constrained schemas; registered both in `TOOL_SCHEMAS` and `TOOL_REGISTRY`.
+- Updated `TRIAGE_SYSTEM_PROMPT` with action rules (don't create/escalate unnecessarily, don't claim unperformed actions).
+- Added `tests/test_actions.py` covering ticket creation, escalation, and rejection of invalid category input.
+- Added `src/support_agent/run_action_agent.py` runner.
+- Added action-tools experiment documentation `docs/experiments/04_action_tools.md`, including a recorded observation of the model falsely claiming an escalation that never occurred.
