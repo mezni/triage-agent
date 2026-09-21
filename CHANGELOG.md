@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Version Summary
+
+| Version | Feature Domain | Key Objectives |
+| --- | --- | --- |
+| 0.1.0 (unreleased) | Phase 0 — Project Foundation | Set up the uv project, dependencies, environment variables, docs, Git hygiene, package layout, and sample data. |
+| 0.1.0 (unreleased) | Phase 1 — First LLM Application | Build a simple LLM triage pipeline: domain models, config, prompts, Anthropic wrapper, orchestrator, CLI runner, and offline tests. |
+
 ## [Unreleased]
 
 ### Phase 0 — Project Foundation
