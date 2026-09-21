@@ -5,7 +5,6 @@ from support_agent.config import (
     ANTHROPIC_MODEL,
 )
 
-
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 

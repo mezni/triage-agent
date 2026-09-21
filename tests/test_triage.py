@@ -1,9 +1,12 @@
+import pytest
+
 from support_agent.models import (
     SupportTicket,
     TicketCategory,
     TicketPriority,
     TriageResult,
 )
+from support_agent.triage import _extract_json
 
 
 def test_valid_triage_result():
@@ -39,3 +42,21 @@ def test_triage_result():
 
     assert result.category == TicketCategory.ACCOUNT
     assert result.priority == TicketPriority.HIGH
+
+
+def test_extract_json_from_plain_response():
+    data = _extract_json('{"category": "billing", "priority": "high"}')
+
+    assert data == {"category": "billing", "priority": "high"}
+
+
+def test_extract_json_from_fenced_response():
+    raw = '```json\n{"category": "billing", "priority": "high"}\n```'
+    data = _extract_json(raw)
+
+    assert data == {"category": "billing", "priority": "high"}
+
+
+def test_extract_json_rejects_non_object():
+    with pytest.raises(TypeError):
+        _extract_json("[1, 2, 3]")
