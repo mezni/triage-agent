@@ -1,9 +1,0 @@
-application:
-  name: blueprint-generator
-  environment: development
-
-llm:
-  provider: openrouter
-  model: openrouter/free
-  temperature: 0.3
-  max_tokens: 2000
