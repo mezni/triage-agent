@@ -6,6 +6,18 @@ from support_agent.models import (
 )
 
 
+def test_valid_triage_result():
+    result = TriageResult(
+        category=TicketCategory.BILLING,
+        priority=TicketPriority.HIGH,
+        reasoning="The customer reports a duplicate charge.",
+        response="We can help investigate the duplicate charge.",
+    )
+
+    assert result.category == TicketCategory.BILLING
+    assert result.priority == TicketPriority.HIGH
+
+
 def test_support_ticket():
     ticket = SupportTicket(
         ticket_id="T001",
