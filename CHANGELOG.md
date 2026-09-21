@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | 0.1.0 (unreleased) | Phase 0 — Project Foundation | Set up the uv project, dependencies, environment variables, docs, Git hygiene, package layout, and sample data. |
 | 0.1.0 (unreleased) | Phase 1 — First LLM Application | Build a simple LLM triage pipeline: domain models, config, prompts, Anthropic wrapper, orchestrator, CLI runner, and offline tests. |
 | 0.1.0 (unreleased) | Phase 2 — Agent Loop | Implement a manual agent loop over the LLM with an educational tool, tool schemas, a tool registry, and execute-then-feed-back tool results. |
+| 0.1.0 (unreleased) | Phase 3 — Knowledge-Base Tool | Ground agent answers by searching a fake knowledge base, with a search tool, result formatter, and grounded-generation prompt rules. |
 
 ## [Unreleased]
 
@@ -50,3 +51,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added offline tests for the tool registry, tool behavior, JSON extraction, and unknown-tool failure handling.
 - Added agent-loop experiment documentation `docs/experiments/02_agent_loop.md`.
 - Fixed a `JSONDecodeError` caused by the model wrapping JSON in code fences.
+
+### Phase 3 — Knowledge-Base Tool
+
+- Added `KnowledgeArticle` model in `src/support_agent/models.py`.
+- Added fake knowledge base `data/knowledge_base.json` with five articles.
+- Added `src/support_agent/knowledge_base.py` (`load_knowledge_base`, keyword-scoring `search_knowledge_base` with optional category filter).
+- Added `SEARCH_KNOWLEDGE_BASE_TOOL` schema and registered it in `TOOL_SCHEMAS`.
+- Added `format_knowledge_results()` and the `search_knowledge_base_tool` registry wrapper returning a formatted string for the LLM.
+- Updated `TRIAGE_SYSTEM_PROMPT` with grounding rules (use the KB, don't invent policies, admit insufficient information).
+- Added `src/support_agent/run_knowledge_agent.py` runner and knowledge-base search tests in `tests/test_tools.py`.
+- Added knowledge-base experiment documentation `docs/experiments/03_knowledge_base.md`.

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "KB001",
+    "title": "Password Reset",
+    "category": "account",
+    "content": "If a customer does not receive the password reset email, they should first check their spam or junk folder. If the email is still missing after several minutes, they should request another password reset email."
+  },
+  {
+    "id": "KB002",
+    "title": "Duplicate Subscription Charge",
+    "category": "billing",
+    "content": "If a customer has been charged twice for the same subscription period, the duplicate charge should be investigated by the billing team. Customers should provide the transaction dates and amounts."
+  },
+  {
+    "id": "KB003",
+    "title": "Mobile App PDF Upload",
+    "category": "technical",
+    "content": "The mobile application supports PDF uploads. If the application crashes during upload, the customer should verify that the application is updated to the latest version and retry the upload."
+  },
+  {
+    "id": "KB004",
+    "title": "Dark Mode",
+    "category": "product",
+    "content": "Dark mode is currently not available in the application."
+  },
+  {
+    "id": "KB005",
+    "title": "Delayed Order",
+    "category": "shipping",
+    "content": "If an order has not moved in tracking for several days, the shipment may require investigation. Customers should provide their order number when contacting support."
+  }
+]

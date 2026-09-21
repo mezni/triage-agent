@@ -30,3 +30,10 @@ class TriageResult(BaseModel):
     priority: TicketPriority
     reasoning: str
     response: str
+
+
+class KnowledgeArticle(BaseModel):
+    id: str
+    title: str
+    category: str
+    content: str
