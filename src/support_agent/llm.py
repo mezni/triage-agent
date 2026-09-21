@@ -8,17 +8,20 @@ from support_agent.config import (
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 
-def ask_llm(system_prompt: str, user_message: str) -> str:
-    response = client.messages.create(
-        model=ANTHROPIC_MODEL,
-        max_tokens=1000,
-        system=system_prompt,
-        messages=[
-            {
-                "role": "user",
-                "content": user_message,
-            }
-        ],
-    )
+def call_llm(
+    *,
+    system_prompt: str,
+    messages: list[dict],
+    tools: list[dict] | None = None,
+):
+    kwargs = {
+        "model": ANTHROPIC_MODEL,
+        "max_tokens": 1000,
+        "system": system_prompt,
+        "messages": messages,
+    }
 
-    return response.content[0].text
+    if tools:
+        kwargs["tools"] = tools
+
+    return client.messages.create(**kwargs)

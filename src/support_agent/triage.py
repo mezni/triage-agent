@@ -1,7 +1,7 @@
 import json
 import re
 
-from support_agent.llm import ask_llm
+from support_agent.llm import call_llm
 from support_agent.models import SupportTicket, TriageResult
 from support_agent.prompts import TRIAGE_SYSTEM_PROMPT
 
@@ -27,11 +27,17 @@ def _extract_json(raw_response: str) -> dict:
 
 
 def triage_ticket(ticket: SupportTicket) -> TriageResult:
-    raw_response = ask_llm(
+    response = call_llm(
         system_prompt=TRIAGE_SYSTEM_PROMPT,
-        user_message=ticket.message,
+        messages=[
+            {
+                "role": "user",
+                "content": ticket.message,
+            }
+        ],
     )
 
+    raw_response = response.content[0].text
     data = _extract_json(raw_response)
 
     return TriageResult.model_validate(data)
