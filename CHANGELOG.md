@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | 0.1.0 (unreleased) | Phase 2 — Agent Loop | Implement a manual agent loop over the LLM with an educational tool, tool schemas, a tool registry, and execute-then-feed-back tool results. |
 | 0.1.0 (unreleased) | Phase 3 — Knowledge-Base Tool | Ground agent answers by searching a fake knowledge base, with a search tool, result formatter, and grounded-generation prompt rules. |
 | 0.1.0 (unreleased) | Phase 4 — Action Tools | Let the agent perform controlled actions by adding `create_ticket` and `escalate_to_human`, an in-memory action store, strict argument validation, and action rules. |
+| 0.1.0 (unreleased) | Phase 5 — Structured Extraction | Extract structured ticket data (customer ID, product, sentiment, priority, category) from unstructured customer messages via an LLM prompt with strict JSON and Pydantic validation. |
 
 ## [Unreleased]
 
@@ -73,3 +74,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `tests/test_actions.py` covering ticket creation, escalation, and rejection of invalid category input.
 - Added `src/support_agent/run_action_agent.py` runner.
 - Added action-tools experiment documentation `docs/experiments/04_action_tools.md`, including a recorded observation of the model falsely claiming an escalation that never occurred.
+- Added a deliberately broken `BAD_CREATE_TICKET_TOOL` schema in `src/support_agent/bad_tools.py` to study how a poorly designed tool schema affects agent behavior.
+- Added offline schema-validation tests in `tests/test_tool_schemas.py` asserting `CREATE_TICKET_TOOL` requires `customer_id`, `category`, `priority`, `summary` and uses valid category/priority enums.
+- Added bad-tool-schema experiment documentation `docs/experiments/03_bad_tool_schema.md` and clarified `CREATE_TICKET_TOOL` field descriptions.
+
+### Phase 5 — Structured Extraction
+
+- Added `Sentiment` enum and `ExtractedTicket` model in `src/support_agent/models.py` with optional `customer_id` and `product`, and enum-constrained `sentiment`, `priority`, and `category`.
+- Added `EXTRACTION_SYSTEM_PROMPT` in `src/support_agent/prompts.py` guiding structured JSON extraction (no invented IDs, null for missing fields, fixed enum choices).
+- Added `src/support_agent/extraction.py` with `extract_ticket_information()` running prompt → LLM → JSON parsing → Pydantic validation, and `ExtractionError` wrapping invalid JSON/validation failures so raw exceptions don't leak.
+- Added `src/support_agent/run_extraction.py` CLI runner for a sample extraction.
+- Added `tests/test_extraction.py` covering valid extraction and rejection of invalid sentiment/priority/category values.
+- Added structured-extraction experiment documentation `docs/experiments/05_structured_extraction.md`.

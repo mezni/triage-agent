@@ -32,6 +32,20 @@ class TriageResult(BaseModel):
     response: str
 
 
+class Sentiment(str, Enum):
+    POSITIVE = "positive"
+    NEUTRAL = "neutral"
+    NEGATIVE = "negative"
+
+
+class ExtractedTicket(BaseModel):
+    customer_id: str | None = None
+    product: str | None = None
+    sentiment: Sentiment
+    priority: TicketPriority
+    category: TicketCategory
+
+
 class KnowledgeArticle(BaseModel):
     id: str
     title: str
