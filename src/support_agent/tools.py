@@ -103,16 +103,17 @@ def create_ticket(
 CREATE_TICKET_TOOL = {
     "name": "create_ticket",
     "description": (
-        "Create a support ticket for a customer when "
-        "their issue requires follow-up or cannot be "
-        "resolved immediately."
+        "Create a support ticket when a customer issue "
+        "requires follow-up or cannot be resolved immediately."
     ),
     "input_schema": {
         "type": "object",
         "properties": {
             "customer_id": {
                 "type": "string",
-                "description": "The customer's unique identifier.",
+                "description": (
+                    "The unique identifier of the customer."
+                ),
             },
             "category": {
                 "type": "string",
@@ -124,7 +125,9 @@ CREATE_TICKET_TOOL = {
                     "shipping",
                     "other",
                 ],
-                "description": "The support ticket category.",
+                "description": (
+                    "The category of the customer's issue."
+                ),
             },
             "priority": {
                 "type": "string",
@@ -134,11 +137,15 @@ CREATE_TICKET_TOOL = {
                     "high",
                     "urgent",
                 ],
-                "description": "The ticket priority.",
+                "description": (
+                    "The urgency of the support issue."
+                ),
             },
             "summary": {
                 "type": "string",
-                "description": "A concise summary of the issue.",
+                "description": (
+                    "A concise description of the customer's issue."
+                ),
             },
         },
         "required": [
