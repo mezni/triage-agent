@@ -6,12 +6,21 @@ All notable changes to this project will be documented in this file.
 
 | Version | Feature Domain         | Key Objectives                                                            |
 | ------- | ---------------------- | ------------------------------------------------------------------------ |
+| 0.1.3   | CLI: Ticket Listing    | `triage-ai tickets` command loading and displaying seed tickets           |
+| 0.1.2   | Data Ingestion         | JSON ticket loader with Pydantic validation into `SupportTicket` objects |
 | 0.1.1   | Domain Models          | Pydantic `SupportTicket` model with validation, unit tests               |
 | 0.1.0   | Project Foundations    | Scaffold package layout, settings via pydantic-settings, Typer CLI entry, pytest suite |
 
 ## Unreleased
 
-Next release will be **0.1.2**; subsequent releases increment the patch version (0.1.3, 0.1.4, ...).
+Next release will be **0.1.4**; subsequent releases increment the patch version (0.1.5, 0.1.6, ...).
+
+## 0.1.2 - 2026-09-24
+
+### Added
+
+- `src/triage_ai/data` package with `loader.py` exposing `load_tickets()`.
+- `load_tickets()` reads a JSON array and validates each entry into a `SupportTicket` model.
 
 ## 0.1.1 - 2026-09-24
 
