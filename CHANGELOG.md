@@ -6,11 +6,19 @@ All notable changes to this project will be documented in this file.
 
 | Version | Feature Domain         | Key Objectives                                                            |
 | ------- | ---------------------- | ------------------------------------------------------------------------ |
+| 0.1.1   | Domain Models          | Pydantic `SupportTicket` model with validation, unit tests               |
 | 0.1.0   | Project Foundations    | Scaffold package layout, settings via pydantic-settings, Typer CLI entry, pytest suite |
 
 ## Unreleased
 
-Next release will be **0.1.1**; subsequent releases increment the patch version (0.1.2, 0.1.3, ...).
+Next release will be **0.1.2**; subsequent releases increment the patch version (0.1.3, 0.1.4, ...).
+
+## 0.1.1 - 2026-09-24
+
+### Added
+
+- `SupportTicket` Pydantic model (`ticket_id`, `customer_id`, `subject`, `description`) with field validation.
+- `tests/test_ticket.py` covering model creation and validation errors.
 
 ## 0.1.0 - 2026-09-24
 
