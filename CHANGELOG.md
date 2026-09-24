@@ -4,16 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## Version History
 
-| Version | Feature Domain         | Key Objectives                                                            |
-| ------- | ---------------------- | ------------------------------------------------------------------------ |
-| 0.1.3   | CLI: Ticket Listing    | `triage-ai tickets` command loading and displaying seed tickets           |
-| 0.1.2   | Data Ingestion         | JSON ticket loader with Pydantic validation into `SupportTicket` objects |
-| 0.1.1   | Domain Models          | Pydantic `SupportTicket` model with validation, unit tests               |
-| 0.1.0   | Project Foundations    | Scaffold package layout, settings via pydantic-settings, Typer CLI entry, pytest suite |
+| Version | Feature Domain      | Key Objectives                                                            |
+| ------- | ------------------- | ------------------------------------------------------------------------ |
+| 0.1.4   | LLM Integration | `ChatOpenRouter` client factory wired to settings; new `llm` package     |
+| 0.1.3   | CLI: Ticket Listing | `triage-ai tickets` command rendering seed tickets from the JSON loader |
+| 0.1.2   | Data Ingestion      | JSON ticket loader with Pydantic validation into `SupportTicket` objects |
+| 0.1.1   | Domain Models       | Pydantic `SupportTicket` model with validation, unit tests               |
+| 0.1.0   | Project Foundations | Scaffold layout, pydantic-settings config, Typer CLI, pytest suite        |
 
 ## Unreleased
 
-Next release will be **0.1.4**; subsequent releases increment the patch version (0.1.5, 0.1.6, ...).
+Next release will be **0.1.5**; subsequent releases increment the patch version (0.1.6, 0.1.7, ...).
 
 ## 0.1.2 - 2026-09-24
 
